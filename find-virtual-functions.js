@@ -1,6 +1,6 @@
 if (process.argv.length < 4) {
     console.error("Usage: node find-virtual-functions.js <path-to-macos-binary> [path-to-ios-binary]");
-    process.exit(1);
+    process.exit(0);
 }
 
 const fs = require("fs");

@@ -1,6 +1,6 @@
 if (process.argv.length < 3) {
     console.error("Usage: node import-virtual-bindings.js <path-to-bindings> <version>");
-    process.exit(1);
+    process.exit(0);
 }
 
 const fs = require("fs");

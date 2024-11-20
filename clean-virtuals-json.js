@@ -1,6 +1,6 @@
 if (process.argv.length < 3) {
     console.error("Usage: node clean-virtuals-json.js <path-to-virtuals-json>");
-    process.exit(1);
+    process.exit(0);
 }
 
 const fs = require("fs");
