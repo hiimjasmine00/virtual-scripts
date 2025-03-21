@@ -13,5 +13,18 @@ Scripts made to find virtual functions in macOS and iOS versions of Geometry Das
 8. You will find two files in the `output` folder: `Cocos2d.bro` and `GeometryDash.bro`. These contain the bindings from the clone, as well as the bindings of the virtual functions found in the game.
 9. After fixing potential quirks in the bindings, you can use them in your projects, or possibly a pull request to the [geode-sdk/bindings](https://github.com/geode-sdk/bindings) repository.
 
+## How To Use (Windows)
+1. Download or clone this repository.
+2. Using the Android binary of Geometry Dash (libcocos2dcpp.so), run the `DumpVirtuals.java` script from the `ghidra` folder in Ghidra. This will dump the virtual functions of the classes in the binary.
+    - The script will prompt you to save to a JSON file. This will be used in the next step.
+3. Run the `clean-virtuals-json.js` script from the main folder, providing the JSON file you saved in the previous step as an argument.
+4. Run the `convert-virtuals-json.js` script from the main folder.
+5. Using the Windows binary of Geometry Dash (GeometryDash.exe), run the `WindowsVirtuals.java` script from the `ghidra` folder in Ghidra. This will dump the virtual functions of the classes in the binary.
+    - The script will prompt you to save to a TXT file. Save it to the "tables" folder in the main directory, with the title "win.txt".
+6. Run the `find-virtual-functions-win.js` script from the main folder, providing the macOS binary path and, optionally, the iOS binary path, as arguments.
+7. Run the `import-virtual-bindings.js` script from the main folder, providing the path to a clone of [geode-sdk/bindings](https://github.com/geode-sdk/bindings), the game version, and the path to the `classes-win` folder as arguments.
+8. You will find two files in the `output` folder: `Cocos2d.bro` and `GeometryDash.bro`. These contain the bindings from the clone, as well as the bindings of the virtual functions found in the game.
+9. After fixing potential quirks in the bindings, you can use them in your projects, or possibly a pull request to the [geode-sdk/bindings](https://geode-sdk/bindings) repository.
+
 ## License
 This project is licensed under the [MIT License](./LICENSE).

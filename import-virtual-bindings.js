@@ -1,5 +1,5 @@
 if (process.argv.length < 3) {
-    console.error("Usage: node import-virtual-bindings.js <path-to-bindings> <version>");
+    console.error("Usage: node import-virtual-bindings.js <path-to-bindings> <version> [path-to-classes]");
     process.exit(0);
 }
 
@@ -9,7 +9,7 @@ const bindingsPath = path.resolve(process.cwd(), process.argv[2]);
 const cocosPath = path.join(bindingsPath, "bindings", process.argv[3], "Cocos2d.bro");
 const gdPath = path.join(bindingsPath, "bindings", process.argv[3], "GeometryDash.bro");
 
-const classesPath = path.join(__dirname, "classes");
+const classesPath = process.argv.length > 4 ? path.resolve(process.cwd(), process.argv[4]) : path.join(__dirname, "classes");
 const virtualClasses = Object.fromEntries(
     fs.readdirSync(classesPath)
         .filter(x => x.endsWith(".txt"))
@@ -111,15 +111,22 @@ for (const [className, funcs] of Object.entries(virtualClasses)) {
                 console.log("Replacing existing binding", originalPlatformValue, "with", platformValue);
                 funcToSet = funcToSet.replace(platformRegex, platformValue);
             }
-            else {
+            else if (!funcToSet.includes(platform + " inline")) {
                 const end = funcToSet.indexOf(" {") >= 0 ? funcToSet.indexOf(" {") : funcToSet.indexOf(";");
                 if (funcToSet[end - 1] == ")") {
                     // no bindings for other platforms
                     funcToSet = funcToSet.slice(0, end) + " = " + platformValue + funcToSet.slice(end);
                 } else {
                     // bindings for other platforms
-                    funcToSet = funcToSet.slice(0, end) + (funcToSet.slice(0, end).endsWith("const") ? " = " : ", ")
-                        + platformValue + funcToSet.slice(end);
+                    if (funcToSet.slice(0, end).endsWith("const")) {
+                        funcToSet = funcToSet.slice(0, end) + " = " + platformValue + funcToSet.slice(end);
+                    } else {
+                        if (platformValue.startsWith("win")) {
+                            funcToSet = funcToSet.slice(0, end).replace(" = ", " = " + platformValue + ", ") + funcToSet.slice(end);
+                        } else {
+                            funcToSet = funcToSet.slice(0, end) + ", " + platformValue + funcToSet.slice(end);
+                        }
+                    }
                 }
             }
         }
