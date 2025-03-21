@@ -1,5 +1,5 @@
 # Virtual Scripts
-Scripts made to find virtual functions in macOS and iOS versions of Geometry Dash.
+Scripts made to find virtual functions in Geometry Dash.
 
 ## How To Use
 1. Download or clone this repository.
