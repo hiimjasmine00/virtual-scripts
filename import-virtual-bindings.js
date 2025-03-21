@@ -9,6 +9,14 @@ const bindingsPath = path.resolve(process.cwd(), process.argv[2]);
 const cocosPath = path.join(bindingsPath, "bindings", process.argv[3], "Cocos2d.bro");
 const gdPath = path.join(bindingsPath, "bindings", process.argv[3], "GeometryDash.bro");
 
+const blacklist = {
+    "win 0x3be40": "{}",
+    "win 0x3c400": "{ return 1; }",
+    "win 0x3c6a0": "{ return true; }",
+    "win 0x83630": "{ return 0; }",
+    "win 0x84610": "{ return false; }"
+}
+
 const classesPath = process.argv.length > 4 ? path.resolve(process.cwd(), process.argv[4]) : path.join(__dirname, "classes");
 const virtualClasses = Object.fromEntries(
     fs.readdirSync(classesPath)
@@ -120,12 +128,12 @@ for (const [className, funcs] of Object.entries(virtualClasses)) {
                     // bindings for other platforms
                     if (funcToSet.slice(0, end).endsWith("const")) {
                         funcToSet = funcToSet.slice(0, end) + " = " + platformValue + funcToSet.slice(end);
+                    } else if (blacklist[platformValue]) {
+                        funcToSet = funcToSet.endsWith(";") ? funcToSet.slice(0, end) + " " + blacklist[platformValue] : funcToSet;
+                    } else if (platformValue.startsWith("win")) {
+                        funcToSet = funcToSet.slice(0, end).replace(" = ", " = " + platformValue + ", ") + funcToSet.slice(end);
                     } else {
-                        if (platformValue.startsWith("win")) {
-                            funcToSet = funcToSet.slice(0, end).replace(" = ", " = " + platformValue + ", ") + funcToSet.slice(end);
-                        } else {
-                            funcToSet = funcToSet.slice(0, end) + ", " + platformValue + funcToSet.slice(end);
-                        }
+                        funcToSet = funcToSet.slice(0, end) + ", " + platformValue + funcToSet.slice(end);
                     }
                 }
             }
