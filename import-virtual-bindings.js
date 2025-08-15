@@ -94,20 +94,18 @@ for (const [className, funcs] of Object.entries(virtualClasses)) {
         const strippedFuncName = funcName.split("(")[0].split("::").pop() + "(" + funcName.split("(").slice(1).join("(");
         let gdFunc = strippedFuncs.findIndex(x => x.includes(strippedFuncName));
         if (strippedFuncName.startsWith("~")) {
-            if (gdFunc >= 0) {
-                const gdLine = gdVirtuals[gdFunc];
-                if (gdLine.trim().startsWith("//")) continue;
-                const foundValues = [];
-                for (const platformValue of platformValues.slice(0, -1).split(", ")) {
-                    const [platform] = platformValue.split(" ");
-                    if (gdLine.includes(platform + " 0x")) {
-                        const platformRegex = new RegExp(platform + " 0x[0-9a-fA-F]+");
-                        const originalPlatformValue = gdLine.match(platformRegex)[0];
-                        if (originalPlatformValue.toLowerCase() == platformValue) foundValues.push(originalPlatformValue);
-                    }
+            const gdLine = gdFuncs.find(x => x.includes(strippedFuncName) && !x.trim().startsWith("//"));
+            if (!gdLine) continue;
+            const foundValues = [];
+            for (const platformValue of platformValues.slice(0, -1).split(", ")) {
+                const [platform] = platformValue.split(" ");
+                if (gdLine.includes(platform + " 0x")) {
+                    const platformRegex = new RegExp(platform + " 0x[0-9a-fA-F]+");
+                    const originalPlatformValue = gdLine.match(platformRegex)[0];
+                    if (originalPlatformValue.toLowerCase() == platformValue) foundValues.push(originalPlatformValue);
                 }
-                if (foundValues.length > 0) console.log("Virtual destructor " + strippedFuncName + ": " + foundValues.join(", "));
             }
+            if (foundValues.length > 0) console.log("Virtual destructor " + strippedFuncName + ": " + foundValues.join(", "));
             continue;
         }
         if (gdFunc < 0 && strippedFuncName.endsWith(" const")) {
