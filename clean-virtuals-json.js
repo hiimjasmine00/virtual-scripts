@@ -62,8 +62,10 @@ function cleanFunctionSig(sig) {
         .replace(/cocos2d::_ccColor3B/g, 'cocos2d::ccColor3B') // cocos devs and their typedef'd structs..
         .replace(/cocos2d::_ccColor4B/g, 'cocos2d::ccColor4B')
         .replace(/cocos2d::_ccColor4F/g, 'cocos2d::ccColor4F')
-        .replace(/cocos2d::_ccVertex2F/g, 'cocos2d::_ccVertex2F')
-        .replace(/cocos2d::_ccVertex3F/g, 'cocos2d::_ccVertex3F')
+        .replace(/cocos2d::_ccVertex2F/g, 'cocos2d::ccVertex2F')
+        .replace(/cocos2d::_ccVertex3F/g, 'cocos2d::ccVertex3F')
+        .replace(/cocos2d::_ccBlendFunc/g, 'cocos2d::ccBlendFunc')
+        .replace(/cocos2d::_ccV3F_C4B_T2F_Quad/g, 'cocos2d::ccV3F_C4B_T2F_Quad')
         .replace(/cocos2d::_ccHSVValue/g, 'cocos2d::ccHSVValue');
 }
 

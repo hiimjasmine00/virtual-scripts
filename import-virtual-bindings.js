@@ -33,8 +33,8 @@ const gdBroLines = gdBro.split("\n");
 for (let i = 0; i < gdBroLines.length; i++) {
     const line = gdBroLines[i];
     const oldBracketCount = curlyBracketCount;
-    if (line.includes("{")) curlyBracketCount++;
-    if (line.includes("}")) curlyBracketCount--;
+    curlyBracketCount += (line.match(/{/g) || []).length;
+    curlyBracketCount -= (line.match(/}/g) || []).length;
     if (line.startsWith("class") && curlyBracketCount == 1 && oldBracketCount == 0) {
         currentClass = line.split(" ")[1];
         // find the last index before the class name that is a blank line
