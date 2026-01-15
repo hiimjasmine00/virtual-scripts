@@ -59,6 +59,7 @@ function cleanFunctionSig(sig) {
         .replace(/int \(cocos2d::CCObject::\*\)\(cocos2d::CCObject\*\)/g, 'cocos2d::SEL_Compare')
         .replace(/void \(cocos2d::CCObject::\*\)\(cocos2d::extension::CCHttpClient\*, cocos2d::extension::CCHttpResponse\*\)/g, 'cocos2d::extension::SEL_HttpResponse')
         .replace(/void \(cocos2d::CCObject::\*\)\(float\)/g, 'cocos2d::SEL_SCHEDULE')
+        .replace(/void \(cocos2d::CCObject::\*\)\(cocos2d::CCObject\*, unsigned int\)/g, 'cocos2d::extension::SEL_CCControlHandler')
         .replace(/cocos2d::_ccColor3B/g, 'cocos2d::ccColor3B') // cocos devs and their typedef'd structs..
         .replace(/cocos2d::_ccColor4B/g, 'cocos2d::ccColor4B')
         .replace(/cocos2d::_ccColor4F/g, 'cocos2d::ccColor4F')

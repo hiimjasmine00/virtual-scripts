@@ -25,8 +25,9 @@ const virtualClasses = Object.fromEntries(
 );
 
 const gdBro = fs.readFileSync(gdPath, "utf8").replace(/\r/g, "") + "\n" + fs.readFileSync(cocosPath, "utf8").replace(/\r/g, "");
-/** @type {Record<string, string>} */
+/** @type {Record<string, string[]>} */
 const gdClasses = {};
+const gdClassLines = {};
 let curlyBracketCount = 0;
 let currentClass = "";
 const gdBroLines = gdBro.split("\n");
@@ -46,28 +47,32 @@ for (let i = 0; i < gdBroLines.length; i++) {
             }
         }
         if (i == j) {
-            gdClasses[currentClass] = line + "\n";
+            gdClassLines[currentClass] = [i];
+            gdClasses[currentClass] = [line];
             continue;
         }
 
-        gdClasses[currentClass] = gdBroLines.slice(j, i).join("\n") + "\n" + line + "\n";
+        gdClassLines[currentClass] = Array.from({length: i - j + 1}, (_, k) => j + k);
+        gdClasses[currentClass] = gdBroLines.slice(j, i).concat([line]);
         continue;
     }
     if (curlyBracketCount == 0 && oldBracketCount > 0) {
-        gdClasses[currentClass] += line;
+        gdClassLines[currentClass].push(i);
+        gdClasses[currentClass].push(line);
         currentClass = "";
         continue;
     }
 
-    if (currentClass.length > 0) gdClasses[currentClass] += line + "\n";
+    if (currentClass.length > 0) {
+        gdClassLines[currentClass].push(i);
+        gdClasses[currentClass].push(line);
+    }
 }
 
-const newGdClasses = {...gdClasses};
 for (const [className, funcs] of Object.entries(virtualClasses)) {
     if (!(className in gdClasses)) continue;
 
-    const gdClass = gdClasses[className];
-    const gdFuncs = gdClass.split("\n");
+    const gdFuncs = gdClasses[className];
     const gdVirtuals = gdFuncs.filter(x => x.match(/\s+virtual/));
     const strippedFuncs = gdVirtuals.map(x => {
         // split by first opening parenthesis and last closing parenthesis
@@ -155,26 +160,21 @@ for (const [className, funcs] of Object.entries(virtualClasses)) {
 
         gdFuncs[originalFuncIndex] = funcToSet;
     }
-
-    newGdClasses[className] = gdFuncs.join("\n");
 }
 
-const newGdBro = {...newGdClasses};
-const newCocosBro = {...newGdClasses};
-let intoCocos = false;
-for (const [className, funcs] of Object.entries(newGdClasses)) {
-    if (intoCocos) {
-        newCocosBro[className] = funcs;
-        delete newGdBro[className];
-    } else {
-        newGdBro[className] = funcs;
-        delete newCocosBro[className];
+for (const [className, funcs] of Object.entries(gdClasses)) {
+    for (let i = 0; i < funcs.length; i++) {
+        gdBroLines[gdClassLines[className][i]] = funcs[i];
     }
-    if (className == "WorldSelectLayer") intoCocos = true;
 }
 
 const outputDir = path.join(__dirname, "output");
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
 
-fs.writeFileSync(path.join(outputDir, "GeometryDash.bro"), Object.values(newGdBro).join("\n\n") + "\n");
-fs.writeFileSync(path.join(outputDir, "Cocos2d.bro"), Object.values(newCocosBro).join("\n\n") + "\n");
+//const turningPoint = gdBroLines.indexOf("}\n\n\nclass"); it's not a string
+const turningPoint = gdBroLines.findIndex((line, index) => {
+    return line == "}" && gdBroLines.length > index + 3 && gdBroLines[index + 1].length == 0 && gdBroLines[index + 2].length == 0 && gdBroLines[index + 3].startsWith("#");
+}) + 3;
+
+fs.writeFileSync(path.join(outputDir, "GeometryDash.bro"), gdBroLines.slice(0, turningPoint).join("\n"));
+fs.writeFileSync(path.join(outputDir, "Cocos2d.bro"), gdBroLines.slice(turningPoint).join("\n"));
