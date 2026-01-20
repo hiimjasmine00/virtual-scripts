@@ -1,4 +1,4 @@
-if (process.argv.length < 4) {
+if (process.argv.length < 3) {
     console.error("Usage: node find-virtual-functions.js <path-to-macos-binary> [path-to-ios-binary]");
     process.exit(0);
 }

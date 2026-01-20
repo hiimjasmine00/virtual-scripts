@@ -39,6 +39,7 @@ public class WindowsVirtuals extends GhidraScript {
         for (int index : tableIndices) {
             sortedTables.add(tables.get(index));
         }
+        vtables.put(symbol.getName(), sortedTables);
     }
 
     @Override

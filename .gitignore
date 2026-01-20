@@ -1,6 +1,6 @@
 .vscode
 classes**
 output
-tables
+tables**
 virtuals**.json
 **/.DS_Store

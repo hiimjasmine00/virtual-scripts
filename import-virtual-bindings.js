@@ -10,11 +10,11 @@ const cocosPath = path.join(bindingsPath, "bindings", process.argv[3], "Cocos2d.
 const gdPath = path.join(bindingsPath, "bindings", process.argv[3], "GeometryDash.bro");
 
 const blacklist = {
-    "win 0x3be40": "{}",
-    "win 0x3c400": "{ return 1; }",
-    "win 0x3c6a0": "{ return true; }",
-    "win 0x83630": "{ return 0; }",
-    "win 0x84610": "{ return false; }"
+    "win 0x3bea0": "{}",
+    "win 0x3c460": "{ return 1; }",
+    "win 0x3c700": "{ return true; }",
+    "win 0x836a0": "{ return 0; }",
+    "win 0x84680": "{ return false; }"
 }
 
 const classesPath = process.argv.length > 4 ? path.resolve(process.cwd(), process.argv[4]) : path.join(__dirname, "classes");
