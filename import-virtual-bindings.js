@@ -73,7 +73,7 @@ for (const [className, funcs] of Object.entries(virtualClasses)) {
     if (!(className in gdClasses)) continue;
 
     const gdFuncs = gdClasses[className];
-    const gdVirtuals = gdFuncs.filter(x => x.match(/\s+virtual/));
+    const gdVirtuals = gdFuncs.filter(x => x.match(/^\s+virtual/));
     const strippedFuncs = gdVirtuals.map(x => {
         // split by first opening parenthesis and last closing parenthesis
         const start = x.indexOf("(");

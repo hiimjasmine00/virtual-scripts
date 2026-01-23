@@ -19,7 +19,7 @@ const winVtables = Object.fromEntries(
     fs.readFileSync(path.join(__dirname, "tables", "win.txt"), "utf8")
         .replace(/\r/g, "")
         .split("\n")
-        .map(x => x.split(" : ").map((y, i) => i == 1 ? y.split(", ").map(z => parseInt(z, 16) - 0x140000e00) : y))
+        .map(x => x.split(" : ").map((y, i) => i == 1 ? y.split(", ").map(z => parseInt(z, 16) - 0x140001a00) : y))
 );
 
 for (const [className, tables] of Object.entries(vfuncs)) {
