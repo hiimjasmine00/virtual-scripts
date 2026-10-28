@@ -24,7 +24,7 @@ const virtualClasses = Object.fromEntries(
         .map(x => [x.split(".")[0].replace(/__/g, "::"), fs.readFileSync(path.join(classesPath, x), "utf8").replace(/\r/g, "").split("\n")])
 );
 
-const gdBro = fs.readFileSync(gdPath, "utf8").replace(/\r/g, "") + "\n" + fs.readFileSync(cocosPath, "utf8").replace(/\r/g, "");
+const gdBro = fs.readFileSync(gdPath, "utf8").replace(/\r/g, "") + "\n[SEPARATOR]\n" + fs.readFileSync(cocosPath, "utf8").replace(/\r/g, "");
 /** @type {Record<string, string[]>} */
 const gdClasses = {};
 const gdClassLines = {};
@@ -56,7 +56,7 @@ for (let i = 0; i < gdBroLines.length; i++) {
         gdClasses[currentClass] = gdBroLines.slice(j, i).concat([line]);
         continue;
     }
-    if (curlyBracketCount == 0 && oldBracketCount > 0) {
+    if (curlyBracketCount == 0 && oldBracketCount > 0 && currentClass.length > 0) {
         gdClassLines[currentClass].push(i);
         gdClasses[currentClass].push(line);
         currentClass = "";
@@ -138,7 +138,7 @@ for (const [className, funcs] of Object.entries(virtualClasses)) {
                 console.log("Replacing existing binding", originalPlatformValue, "with", platformValue);
                 funcToSet = funcToSet.replace(platformRegex, platformValue);
             }
-            else if (!funcToSet.includes(platform + " inline")) {
+            else if (!funcToSet.includes(platform + " inline") && !funcToSet.includes(", inline") && !funcToSet.includes(" = inline")) {
                 const end = funcToSet.indexOf(" {") >= 0 ? funcToSet.indexOf(" {") : funcToSet.indexOf(";");
                 if (funcToSet[end - 1] == ")") {
                     // no bindings for other platforms
@@ -171,10 +171,7 @@ for (const [className, funcs] of Object.entries(gdClasses)) {
 const outputDir = path.join(__dirname, "output");
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
 
-//const turningPoint = gdBroLines.indexOf("}\n\n\nclass"); it's not a string
-const turningPoint = gdBroLines.findIndex((line, index) => {
-    return line == "}" && gdBroLines.length > index + 3 && gdBroLines[index + 1].length == 0 && gdBroLines[index + 2].length == 0 && gdBroLines[index + 3].startsWith("#");
-}) + 3;
+const turningPoint = gdBroLines.indexOf("[SEPARATOR]");
 
 fs.writeFileSync(path.join(outputDir, "GeometryDash.bro"), gdBroLines.slice(0, turningPoint).join("\n"));
-fs.writeFileSync(path.join(outputDir, "Cocos2d.bro"), gdBroLines.slice(turningPoint).join("\n"));
+fs.writeFileSync(path.join(outputDir, "Cocos2d.bro"), gdBroLines.slice(turningPoint + 1).join("\n"));

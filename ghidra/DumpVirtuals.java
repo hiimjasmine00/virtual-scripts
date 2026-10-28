@@ -46,7 +46,7 @@ public class DumpVirtuals extends GhidraScript {
     }
 
     boolean isTypeinfo(Address addr) {
-        var com = listing.getComment(CodeUnit.PLATE_COMMENT, addr);
+        var com = listing.getComment(CommentType.PLATE, addr);
         if (com == null) return false;
         return com.contains("typeinfo");
         // this.currentProgram.getSymbolTable().getPrimarySymbolAt(addr).getName().equals("typeinfo");
@@ -77,7 +77,7 @@ public class DumpVirtuals extends GhidraScript {
     }
 
     boolean hasVtableComment(Address addr) {
-        var com = listing.getComment(CodeUnit.PLATE_COMMENT, addr);
+        var com = listing.getComment(CommentType.PLATE, addr);
         if (com == null) return false;
         return com.contains("vtable");
     }
@@ -145,7 +145,7 @@ public class DumpVirtuals extends GhidraScript {
                     if (function.getName().contains("pure_virtual")) {
                         virtuals.add("pure_virtual_" + curAddr.toString() + "()");
                     } else {
-                        var comment = listing.getComment(CodeUnit.PLATE_COMMENT, functionAddr);
+                        var comment = listing.getComment(CommentType.PLATE, functionAddr);
                         var funcSig = comment.replaceAll("^(non-virtual thunk to )?", "");
                         virtuals.add(funcSig);
                     }

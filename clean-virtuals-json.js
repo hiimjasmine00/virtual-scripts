@@ -70,4 +70,4 @@ function cleanFunctionSig(sig) {
         .replace(/cocos2d::_ccHSVValue/g, 'cocos2d::ccHSVValue');
 }
 
-fs.writeFileSync(path.join(__dirname, "virtuals.json"), JSON.stringify(Object.fromEntries(Object.entries(virtuals).map(([k, v]) => [k, v.map(x => x.map(cleanFunctionSig))]))));
+fs.writeFileSync(path.join(__dirname, "virtuals.json"), JSON.stringify(Object.fromEntries(Object.entries(virtuals).map(([k, v]) => [k, v.map(x => x.map(cleanFunctionSig))])), null, 2));
