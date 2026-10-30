@@ -17,36 +17,36 @@ function cleanFunctionSig(sig) {
         .replace(/ \*/g, '*')
         .replace(/\)const /g, ') const')
         .replace(/,(?!\s)/g, ', ')
-        .replace(/std::basic_string<char, std::char_traits<char>, std::allocator<char> ?>/g, 'gd::string')
-        .replace(/std::string/g, 'gd::string')
+        .replace(/::__ndk1::/g, '::')
+        .replace(/std::basic_string<char, std::char_traits<char>, std::allocator<char> ?>/g, 'std::string')
+        .replace(/std::string/g, 'std::string')
         .replace(
             /std::set<(.*?), std::less<(.*?)>, std::allocator<(.*?)> ?>/g,
-            v => `gd::set<${v.match(/(?<=std::set<)(.*?)(?=,)/)[0]}>`
+            v => `std::set<${v.match(/(?<=std::set<)(.*?)(?=,)/)[0]}>`
         )
         .replace(
             /std::vector<(.*?), std::allocator<(.*?)> ?>/g,
-            v => `gd::vector<${v.match(/(?<=std::vector<)(.*?)(?=,)/)[0]}>`
+            v => `std::vector<${v.match(/(?<=std::vector<)(.*?)(?=,)/)[0]}>`
         )
-        .replace(/std::_Tree_const_iterator<std::_Tree_val<std::_Tree_simple_types<cocos2d::CCObject\*> ?> ?>/g, 'cocos2d::CCSetIterator')
         .replace(
             /std::map<(.*?), (.*?), std::less<(.*?)>, std::allocator<std::pair<(.*?), (.*?)> ?> ?>/g,
             v => {
                 const m = v.match(/(?<=std::map<)(.*?),(.*?)(?=,)/);
-                return `gd::map<${m[1]},${m[2]}>`;
+                return `std::map<${m[1]},${m[2]}>`;
             }
         )
         .replace(
             /std::unordered_map<(.*?), std::pair<double, double>, .*?> ?> ?> ?>/g,
             v => {
                 const m = v.match(/(?<=std::unordered_map<)(.*?)(?=,)/);
-                return `gd::unordered_map<${m[1]}, std::pair<double, double>>`;
+                return `std::unordered_map<${m[1]}, std::pair<double, double>>`;
             }
         )
         .replace(
             /std::unordered_map<(.*?), (.*?), .*?> ?> ?>/g,
             v => {
                 const m = v.match(/(?<=std::unordered_map<)(.*?),(.*?)(?=,)/);
-                return `gd::unordered_map<${m[1]},${m[2]}>`;
+                return `std::unordered_map<${m[1]},${m[2]}>`;
             }
         )
         .replace(/unsigned long long/g, 'uint64_t')
